@@ -1,13 +1,11 @@
 {
   "name": "bizkit-machine",
   "version": "1.0.0",
+  "private": true,
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
     "jest": "27.4.7",
     "xstate": "4.28.0"
-  },
-  "dependencies": {
-    "@xstate/fsm": "1.6.3"
   }
 }
