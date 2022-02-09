@@ -36,6 +36,7 @@ const FULLY_STOPPED_STATE = 'fully_stopped';
 const TURN_ON_EVENT = 'turn_on';
 const TURN_OFF_EVENT = 'turn_off';
 const PAUSED_EVENT = 'paused';
+const TICK_EVENT = 'TICK';
 
 // Belt implementation
 // 00 10 20 30 40 50
@@ -138,7 +139,7 @@ const bizkitMachine = createMachine(
     on: {
       [TURN_ON_EVENT]: STARTED_STATE,
       [TURN_OFF_EVENT]: STOPPED_STATE,
-      TICK: {
+      [TICK_EVENT]: {
         actions: [
           assign({
             ticks: ({ ticks }) => (ticks + 1) % 10,
