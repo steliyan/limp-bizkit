@@ -45,6 +45,12 @@ const PAUSED_EVENT = 'paused';
 // __ - nothing
 // OO - oven
 
+const EXTRUDER_POSITION = 0;
+const STAMPER_POSITION = 10;
+const OVEN_POSITION = 30;
+const OVEN_WIDTH = 10;
+const WIDTH = 50;
+
 const { choose, raise } = actions;
 
 const bizkitMachine = createMachine(
@@ -163,14 +169,19 @@ const bizkitMachine = createMachine(
       extrudeDough: assign({
         cookieId: ({ cookieId }) => cookieId + 1,
         belt: ({ belt, cookieId }) => [
-          { id: cookieId, type: 'dough', position: 0, cookLevel: 0 },
+          {
+            id: cookieId,
+            type: 'dough',
+            position: EXTRUDER_POSITION,
+            cookLevel: 0,
+          },
           ...belt,
         ],
       }),
       stampBiscuit: assign({
         belt: ({ belt }) => {
           return belt.map((item) => {
-            if (item.position === 10 && item.type === 'dough') {
+            if (item.position === STAMPER_POSITION && item.type === 'dough') {
               return { ...item, type: 'biscuit' };
             }
 
@@ -181,7 +192,10 @@ const bizkitMachine = createMachine(
       bakeCookies: assign({
         belt: ({ belt }) => {
           return belt.map((item) => {
-            if (item.position >= 30 && item.position < 40) {
+            if (
+              item.position >= OVEN_POSITION &&
+              item.position < OVEN_POSITION + OVEN_WIDTH
+            ) {
               return { ...item, cookLevel: item.cookLevel + 1 };
             }
 
@@ -190,26 +204,33 @@ const bizkitMachine = createMachine(
         },
       }),
       rollBelt: assign({
-        basket: ({ belt, basket }) => {
-          return [
-            ...belt
-              .filter(({ position }) => position > 50)
-              // eslint-disable-next-line no-unused-vars
-              .map(({ position, ...rest }) => rest),
-            ...basket,
-          ];
-        },
-        belt: ({ belt }) => {
-          return belt
-            .filter(({ position }) => position <= 50)
+        basket: ({ belt, basket }) => [
+          ...belt
+            .filter(({ position }) => position >= WIDTH - 1)
+            // eslint-disable-next-line no-unused-vars
+            .map(({ position, ...rest }) => rest),
+          ...basket,
+        ],
+        belt: ({ belt }) =>
+          belt
             .map(({ position, ...rest }) => ({
               ...rest,
               position: position + 1,
-            }));
-        },
+            }))
+            .filter(({ position }) => position < WIDTH),
       }),
     },
   }
 );
 
-module.exports = { bizkitMachine, TURN_ON_EVENT, TURN_OFF_EVENT, PAUSED_EVENT };
+module.exports = {
+  bizkitMachine,
+  TURN_ON_EVENT,
+  TURN_OFF_EVENT,
+  PAUSED_EVENT,
+  TICK_EVENT,
+  EXTRUDER_POSITION,
+  STAMPER_POSITION,
+  OVEN_POSITION,
+  OVEN_WIDTH,
+};
