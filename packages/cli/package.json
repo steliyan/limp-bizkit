@@ -5,6 +5,7 @@
   "license": "MIT",
   "bin": "cli.js",
   "dependencies": {
+    "@xstate/react": "2.0.0",
     "bizkit-machine": "1.0.0",
     "import-jsx": "4.0.1",
     "ink": "3.2.0",
